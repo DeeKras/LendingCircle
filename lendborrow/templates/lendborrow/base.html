@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<h1>LendBorrow Main Menu</h1>
+{{login_or_logout}}
+{{logged_in_as}}
+<hr>
+<form action="/" method = "POST" id="base">{% csrf_token %}
+<table>
+    <col width="400">
+    <col width="400">
+    <col width="400">
+    <tr>
+        <th>Users <br><hr></th>
+        <th>Borrow Transactions <br><hr></th>
+        <th>Reports <br><hr></th>
+    </tr>
+    <tr>
+        <td>
+            <input type="submit" name="submitted" form="base" value="New User" />
+            <input type="submit" name="submitted" form="base" value="Edit User" />
+        </td>
+        <td>
+            <input type="submit" name="submitted" value="New Borrow" />
+            <input type="submit" name="submitted" form="base" value="Edit Borrow">
+            <input type="submit" name="submitted" form="base" value="Return Item" />
+        </td>
+        <td>
+            <input type="submit" name="submitted" form="base" value="What you Lent" />
+            <input type="submit" name="submitted" form="base" value="What you Borrowed" />
+        </td>
+    </tr>
+</table>
+</form>
+<hr>
+
+{% block content %}{% endblock %}
+</body>
+</html>
