@@ -7,7 +7,7 @@ from forms import UserProfileForm, UserForm, BorrowForm, BorrowFormSet, Borrowed
 from models import Borrowed_Item, BorrowTransaction
 
 def user_login(request):
-
+    #login
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
