@@ -5,10 +5,10 @@
     <title></title>
 </head>
 <body>
-<h1>LendBorrow Main Menu</h1>
-{{login_or_logout}}
-{{logged_in_as}}
-<hr>
+<h1>
+    logged in as: {{logged_in_as}}
+</h1>
+
 <form action="/" method = "POST" id="base">{% csrf_token %}
 <table>
     <col width="400">

@@ -56,7 +56,7 @@ def index(request):
                      'mode': 'new borrow'}
             template_to_use = 'lendborrow/borrow.html'
 
-        elif 'What you Lent' in request.POST['submitted']:
+        elif 'What you Lent' in request.POST['submitted']:  #TODO: add filters & order_by
             logged_in_as = request.user
             borroweds = Borrowed_Item.objects.filter(borrow_transaction__lender=logged_in_as)
             mode = 'lent'
@@ -66,7 +66,7 @@ def index(request):
                      'mode': mode}
             template_to_use = 'reports/report.html'
 
-        elif 'What you Borrowed' in request.POST['submitted']:
+        elif 'What you Borrowed' in request.POST['submitted']: #TODO: add filters & order_by
             logged_in_as = request.user
             borroweds = Borrowed_Item.objects.filter(borrow_transaction__borrower=logged_in_as)
             mode = 'borrowed'
@@ -80,16 +80,6 @@ def index(request):
         if request.user:
             context = {'logged_in_as': request.user}
         template_to_use = 'lendborrow/home.html'
-
-
-        #
-        # elif 'borrowed' in request.POST:
-        #     print "request.session['user_id'] {}".format(request.session['user_id'])
-        #     borrower = Person.objects.get(id=request.session['user_id'])
-        #     borroweds = Borrowed.objects.filter(borrower__name=borrower)
-        #     context = {'borroweds': borroweds,
-        #                'borrower': borrower}
-        #     template_to_use = 'borrowstuff/rpt_borrowed.html'
 
     return render(request, template_to_use, context)
 

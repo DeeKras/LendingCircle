@@ -5,14 +5,15 @@
     <title></title>
 </head>
 <body>
+{% extends 'lendborrow/base.html' %}
+{% block content %}
 <h1>
-
+    Report:
     {% if mode = 'lent' %}
-        Lender:
+        Lent
     {% else %}
-        Borrower:
+        Borrowed
     {% endif %}
-    {{logged_in_as}}
 </h1>
 
 <br><hr>
@@ -93,5 +94,6 @@ table, th, td {
         {% endfor %}
 
     </table>
+{% endblock %}
 </body>
 </html>
