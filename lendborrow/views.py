@@ -1,10 +1,11 @@
 from django.shortcuts import *
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 from django.template import RequestContext
 from django.views.generic import View, ListView, CreateView,  UpdateView, DeleteView, DetailView
 
 from forms import UserProfileForm, UserForm, BorrowForm, BorrowFormSet, BorrowedItems
-from models import Borrowed_Item, BorrowTransaction
+from models import Borrowed_Item, BorrowTransaction, UserProfile
 
 def user_login(request):
     #login
@@ -28,6 +29,9 @@ def user_login(request):
 
 
 def index(request):
+    template_to_use = 'lendborrow/home.html'
+    context = {}
+
     if request.method == 'POST':
         if 'New User' in request.POST['submitted']:
             registered = False
@@ -52,17 +56,32 @@ def index(request):
                      'mode': 'new borrow'}
             template_to_use = 'lendborrow/borrow.html'
 
+        elif 'What you Lent' in request.POST['submitted']:
+            logged_in_as = request.user
+            borroweds = Borrowed_Item.objects.filter(borrow_transaction__lender=logged_in_as)
+            mode = 'lent'
+
+            context={'borroweds': borroweds,
+                     'logged_in_as': logged_in_as,
+                     'mode': mode}
+            template_to_use = 'reports/report.html'
+
+        elif 'What you Borrowed' in request.POST['submitted']:
+            logged_in_as = request.user
+            borroweds = Borrowed_Item.objects.filter(borrow_transaction__borrower=logged_in_as)
+            mode = 'borrowed'
+
+            context={'borroweds': borroweds,
+                     'logged_in_as': logged_in_as,
+                     'mode': mode}
+            template_to_use = 'reports/report.html'
+
     else:
         if request.user:
             context = {'logged_in_as': request.user}
         template_to_use = 'lendborrow/home.html'
 
-        # elif 'lent' in request.POST:
-        #     lender = Person.objects.get(id=request.session['user_id'])
-        #     borroweds = Borrowed.objects.filter(lender__name=lender)
-        #     context = {'borroweds': borroweds,
-        #                'lender': lender}
-        #     template_to_use = 'borrowstuff/rpt_lent.html'
+
         #
         # elif 'borrowed' in request.POST:
         #     print "request.session['user_id'] {}".format(request.session['user_id'])
@@ -127,7 +146,7 @@ def borrow(request):
         context={'borrow_form': Borrow(),
                  'borrowed_items_form': BorrowedItems(),
                  'mode': 'new borrow',
-                 'lender':request.user}
+                 'lender': request.user}
         template_to_use = 'lendborrow/borrow.html'
 
     return render(request, template_to_use, context)

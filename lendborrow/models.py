@@ -104,6 +104,7 @@ class Borrowed_Item(models.Model):
         lender_profile.items_lent +=1
         lender_profile.save()
 
+        print self.borrow_transaction.borrower
         borrower_profile = UserProfile.objects.get(user=self.borrow_transaction.borrower)
         borrower_profile.items_borrowed +=1
         borrower_profile.save()
