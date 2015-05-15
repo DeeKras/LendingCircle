@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+from datetime import datetime
+
 class UserProfile(models.Model):
     #extend the auth.User
     user = models.OneToOneField(User)
@@ -12,7 +14,11 @@ class UserProfile(models.Model):
     borrower_score = models.IntegerField(default=50)
     lender_score = models.IntegerField(default=50)
     items_lent = models.IntegerField(default=0)
+    items_lent_forgiven = models.IntegerField(default=0)
+    items_lent_returned = models.IntegerField(default=0)
+
     items_borrowed = models.IntegerField(default=0)
+    items_borrowed_forgiven = models.IntegerField(default=0)
     items_returned = models.IntegerField(default=0)
 
     def __unicode__(self):
@@ -65,6 +71,7 @@ class Borrowed_Item(models.Model):
     )
 
     BORROWED_STATUS = (
+        ('All', 'All Status'),
         ('Open', 'Open: Still Borrowed'),
         ('Returned', 'Returned'),
         ('Forgiven', "Forgiven: Don't expect to receive it back"),
@@ -84,8 +91,7 @@ class Borrowed_Item(models.Model):
                                           choices=SEND_REMINDERS_TO)
     borrowed_status = models.CharField(max_length=9,
                                        blank=True, null=True,
-                                          choices=BORROWED_STATUS,
-                                        default='open')
+                                       default='open')
 
     returned_date = models.DateField(blank=True, null=True)
     returned_condition = models.CharField(max_length=2,
@@ -104,35 +110,47 @@ class Borrowed_Item(models.Model):
         lender_profile.items_lent +=1
         lender_profile.save()
 
-        print self.borrow_transaction.borrower
         borrower_profile = UserProfile.objects.get(user=self.borrow_transaction.borrower)
         borrower_profile.items_borrowed +=1
         borrower_profile.save()
 
-    def borrowed_item_is_edited(self):
-        pass
-        # if fields have been changed/ edited (wording, expected return date, category, etc. - not status)
-            # save the instance with the new changes
-        # elif item is cancelled (meaning they want to cancel the transaction - right away, not item is returned):
-            # self.borrowed_status = 'Cancelled'
-            # self.borrow_transaction.lender.consumer_rating.items_lent -=1
-            # self.borrow_transaction.borrower.consumer_rating.items_borrowed -=1
-            # self.borrow_transaction.lender.consumer_rating.save()
-        # elif lender 'forgives' the item (realizes that will never get it back and wants it
-        # out of list of 'open' transactions):
-            # self.borrowed_status = 'Forgiven'
+    def borrow_is_cancelled(self):
+        borrower_profile = UserProfile.objects.get(user=self.borrow_transaction.borrower)
+        borrower_profile.items_borrowed -=1
+        borrower_profile.save()
+
+        lender_profile = UserProfile.objects.get(user=self.borrow_transaction.lender)
+        lender_profile.items_lent -=1
+        lender_profile.save()
+
+
+    def borrow_is_forgiven(self):
+        borrower_profile = UserProfile.objects.get(user=self.borrow_transaction.borrower)
+        borrower_profile.items_borrowed_forgiven +=1
+        borrower_profile.save()
+
+        lender_profile = UserProfile.objects.get(user=self.borrow_transaction.lender)
+        lender_profile.items_lent_forgiven +=1
+        lender_profile.save()
 
 
     def item_is_returned(self):
-        pass
         #after item is returned,
-        #1. self.return_date = now()
-        #2. self.save()
+        self.borrowed_status = 'Returned'
+        self.returned_date = timezone.now()
+        self.save()
+
+        borrower_profile = UserProfile.objects.get(user=self.borrow_transaction.borrower)
+        borrower_profile.items_returned +=1
+        borrower_profile.save()
+
+        lender_profile = UserProfile.objects.get(user=self.borrow_transaction.lender)
+        lender_profile.items_lent_returned +=1
+        lender_profile.save()
+
         #3. compare 'borrowed_condition' and 'returned_condition'
         #     if ==, borrower_score +=3
         #     if <, borrower_score -= (3* levels less than borrowed_condition)
-        #4. borrower's items_returned +=1
-        #5. consumer_rating.save()
 
 
 

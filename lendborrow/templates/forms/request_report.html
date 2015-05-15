@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+{% extends 'lendborrow/base.html' %}
+{% block content %}
+    logged in as: {{logged_in_as}}<br>
+    <form action = "/reports/" method="POST">{% csrf_token %}
+        {{form.as_p}}
+        <input type="submit" name="submitted" value="Save" >
+    </form>
+{% endblock %}
+</body>
+</html>

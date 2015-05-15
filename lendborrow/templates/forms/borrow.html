@@ -7,7 +7,8 @@
 <body>
 {% extends 'lendborrow/base.html' %}
 {% block content %}
-    <h1>New Borrow</h1>
+        New Borrow Transaction
+
     <form action = "/borrow/" method="POST">
         {% csrf_token %}
 
@@ -22,7 +23,9 @@
         Expected return date: {{borrowed_items_form.expected_return_date}}
         Send borrower a reminder? {{borrowed_items_form.send_borrower_reminder}}<br>
 
+        <input type="hidden" name="mode" value="new">
         <input type="submit" name="submit" value="Save" >
+
     </form>
 {% endblock %}
 </body>

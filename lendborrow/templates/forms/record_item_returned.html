@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+{% extends 'lendborrow/base.html' %}
+{% block content %}
+<style>
+    table, th, td {
+        border: 1px solid black;
+        font size="2";
+        align="left";
+    }
+</style>
+<h1> Returning Item</h1>
+{{lender}}<br>
+{{mode}}<br>
+
+
+
+                <style>
+table, th, td {
+    border: 1px solid black;
+    font size="2";
+    align="left";
+}
+</style>
+
+
+    <table>
+
+            <col width="20">
+            <col width="130">
+            <col width="130">
+            <col width="100">
+            <col width="500">
+            <col width="100">
+            <col width="150">
+
+
+
+            <th>
+                Borrower
+            </th>
+            <th>
+                Borrowed Date
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Condition
+            </th>
+
+            <th>
+                Status
+            </th>
+            <th>
+                Expected return date
+            </th>
+
+
+        <tr>
+
+            <td>
+                {{to_return.borrow_transaction.borrower}}
+            </td>
+            <td>
+                {{to_return.borrow_transaction.borrowed_date|date:"m\/d\/Y"}}
+            </td>
+            <td>
+                {{to_return.get_item_category_display}}
+            </td>
+            <td>
+                {{to_return.item_short_desc}}
+            </td>
+            <td>
+                {{to_return.get_borrowed_condition_display}}
+            </td>
+            <td>
+                {{to_return.borrowed_status}}
+            </td>
+            <td>
+                {{to_return.expected_return_date|date:"m\/d\/Y"}}
+            </td>
+        </tr>
+
+
+    </table>
+            <form action="/returned/" method="post">{% csrf_token %}
+                <input type="hidden" name="item_id" value={{to_return.id}}>
+                condition: {{form.returned_condition}}
+                comment: {{form.returned_comment}}
+                <input type="submit">
+            </form>
+{% endblock %}
+</body>
+</html>

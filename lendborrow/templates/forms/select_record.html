@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+{% extends 'lendborrow/base.html' %}
+{% block content %}
+<style>
+    table, th, td {
+        border: 1px solid black;
+        font size="2";
+        align="left";
+    }
+</style>
+<h1> Select Record</h1>
+{{lender}}<br>
+
+
+{% if not borroweds %}
+    No items are left 'open' that can be
+    {% if mode = 'Edit Borrow' %}
+        editted
+    {% elif mode = 'Return Item' %}
+        marked as returned
+    {% endif %}
+{% else %}
+
+        Select an item to
+        {% if mode = 'Edit Borrow' %}
+            edit
+        {% elif mode = 'Return Item' %}
+            mark as returned
+        {% endif %}
+<style>
+table, th, td {
+    border: 1px solid black;
+    font size="2";
+    align="left";
+}
+</style>
+
+    <table>
+
+            <col width="20">
+            <col width="130">
+            <col width="130">
+            <col width="100">
+            <col width="500">
+            <col width="100">
+            <col width="100">
+            <col width="100">
+
+
+
+            <th>
+                ID
+            </th>
+            <th>
+                Borrower
+            </th>
+            <th>
+                Borrowed Date
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Condition
+            </th>
+
+            <th>
+                Status
+            </th>
+            <th>
+                Expected Return Day
+            </th>
+
+            {% for b in borroweds %}
+        <tr>
+            <td>
+                {{b.id}}
+            </td>
+            <td>
+                {{b.borrow_transaction.borrower}}
+            </td>
+            <td>
+                {{b.borrow_transaction.borrowed_date|date:"m\/d\/Y"}}
+            </td>
+            <td>
+                {{b.get_item_category_display}}
+            </td>
+            <td>
+                {{b.item_short_desc}}
+
+            </td>
+            <td>
+                {{b.get_borrowed_condition_display}}
+            </td>
+            <td>
+                {{b.borrowed_status}}
+            </td>
+            <td>
+                {{b.expected_return_date}}
+            </td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+<hr>
+            <form action="/selected/" method="post">{% csrf_token %}
+                item ID <input type="text" name="item_id">
+                {% if mode = 'Edit Borrow' %}
+                    <input type="submit" name="submitted" value="item to edit">
+                {% elif mode = 'Return Item' %}
+                    <input type="submit" name="submitted" value="item to return">
+                {% endif %}
+
+            </form>
+        {% endif %}
+{% endblock %}
+</body>
+</html>

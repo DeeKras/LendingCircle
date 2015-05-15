@@ -29,11 +29,10 @@ table, th, td {
 
             <col width="175">
             <col width="130">
+            <col width="200">
+            <col width="360">
+            <col width="130">
             <col width="260">
-            <col width="300">
-            <col width="130">
-            <col width="130">
-            <col width="130">
 
 
 
@@ -56,12 +55,11 @@ table, th, td {
             <th>
                 Condition
             </th>
-            <th>
-                Expected Return Date
-            </th>
+
             <th>
                 Status
             </th>
+
             {% for b in borroweds %}
         <tr>
             <td>
@@ -85,10 +83,12 @@ table, th, td {
                 {{b.get_borrowed_condition_display}}
             </td>
             <td>
-                {{b.expected_return_date|date:"m-j-Y"}}
-            </td>
-            <td>
-                {{b.borrowed_status}}
+                {{b.borrowed_status}}:
+                {% if b.borrowed_status = 'Returned' %}
+                    {{b.returned_date|date:"m\/d\/Y"}} ({{b.get_returned_condition_display}})
+                {% elif  b.borrowed_status = 'Open' %}
+                    Expected return - {{b.expected_return_date|date:"m\/d\/Y"}}
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

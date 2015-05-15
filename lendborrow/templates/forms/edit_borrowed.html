@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+{% extends 'lendborrow/base.html' %}
+{% block content %}
+    <h1>Edit Borrow</h1>
+    <form action = "/borrow/" method="POST">
+        {% csrf_token %}
+
+        <b>Borrower: </b>{{borrowed.borrow_transaction.borrower}} ( {{borrowed.id}} )
+        <hr>
+        Item borrowed:<br>
+        Category: {{form.item_category}}
+        Short description: {{form.item_short_desc}}
+        Detailed description: {{form.item_detail_desc}}<br>
+        Borrowed condition: {{form.borrowed_condition}}
+        Borrowed Status: {{form.borrowed_status}}
+        Comment: {{form.borrowed_comment}}<br>
+        Expected return date: {{form.expected_return_date}}
+        Send borrower a reminder? {{form.send_borrower_reminder}}<br>
+
+        <input type="hidden" name="mode" value="edit">
+        <input type="hidden" name="item_id" value={{borrowed.id}}>
+        <input type="submit" name="submit" value="Save" >
+
+    </form>
+{% endblock %}
+</body>
+</html>
