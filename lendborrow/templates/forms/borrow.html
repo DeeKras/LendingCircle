@@ -6,13 +6,14 @@
 </head>
 <body>
 {% extends 'lendborrow/base.html' %}
+
 {% block content %}
         New Borrow Transaction
 
     <form action = "/borrow/" method="POST">
         {% csrf_token %}
 
-        <b>Borrower</b>{{borrow_form.borrower}}
+        <b>Borrower</b>{{borrow_form.borrower}}<br><b> {{ error_message }}</b><br>
         <hr>
         Item borrowed:<br>
         Category: {{borrowed_items_form.item_category}}

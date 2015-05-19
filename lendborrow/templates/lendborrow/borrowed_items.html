@@ -8,7 +8,7 @@
 {% if message %}
     {{message}}
 {% endif %}
-<form method="post" action="/borrow/">{% csrf_token %}
+<form method="post" action="/borrow/edit/">{% csrf_token %}
     {{ formset.management_form }}
     {{ formset.non_form_errors.as_ul }}
 <table id="formset" class="form">

@@ -8,7 +8,7 @@
 {% extends 'lendborrow/base.html' %}
 {% block content %}
     <h1>Edit Borrow</h1>
-    <form action = "/borrow/" method="POST">
+    <form action = "/borrow/edit/" method="POST">
         {% csrf_token %}
 
         <b>Borrower: </b>{{borrowed.borrow_transaction.borrower}} ( {{borrowed.id}} )

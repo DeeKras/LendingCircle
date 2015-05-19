@@ -32,7 +32,8 @@ class BorrowTransaction(models.Model):
     #one borrowing transaction can have several items lent to the same person
     borrowed_date = models.DateTimeField(default=timezone.now())
     lender = models.ForeignKey('auth.User', related_name='lender')
-    borrower = models.ForeignKey('auth.User', related_name='borrower')
+    borrower = models.ForeignKey('auth.User', related_name='borrower',
+                                 error_messages={'required': 'please choose a borrower', 'null': 'NULL11!'})
 
     def new_borrow_transaction(self):
         Borrowed_Item.objects.create(borrow_transaction=self)
@@ -80,18 +81,18 @@ class Borrowed_Item(models.Model):
 
     borrow_transaction = models.ForeignKey(BorrowTransaction, null=True, blank=True)
     item_category = models.CharField(max_length=2,
-                                choices=ITEM_CATEGORIES,)
-    item_short_desc = models.CharField(max_length=255)
-    item_detail_desc = models.TextField(blank=True)
+                                choices=ITEM_CATEGORIES)
+    item_short_desc = models.CharField(max_length=255,)
+    item_detail_desc = models.TextField(blank=True,)
     expected_return_date = models.DateField(null=True, blank=True)
     borrowed_condition = models.CharField(max_length=2,
                                           choices=ITEM_CONDITIONS_CHOICES)
-    borrowed_comment = models.TextField(blank=True)
+    borrowed_comment = models.TextField(blank=True,)
     send_borrower_reminder = models.CharField(max_length=5,
                                           choices=SEND_REMINDERS_TO)
     borrowed_status = models.CharField(max_length=9,
                                        blank=True, null=True,
-                                       default='open')
+                                       default='Open')
 
     returned_date = models.DateField(blank=True, null=True)
     returned_condition = models.CharField(max_length=2,
@@ -147,6 +148,16 @@ class Borrowed_Item(models.Model):
         lender_profile = UserProfile.objects.get(user=self.borrow_transaction.lender)
         lender_profile.items_lent_returned +=1
         lender_profile.save()
+
+        date_diff = ((self.returned_date.date() - self.expected_return_date).days)
+        if date_diff < 0:
+            print 'returned {} days EARLY. thank you!'.format(abs(date_diff))
+        elif date_diff == 0:
+            print 'returned on time. thank you!'
+        elif date_diff >0:
+            print 'returned {} days LATE. please be on time next time!'.format(abs(date_diff))
+
+
 
         #3. compare 'borrowed_condition' and 'returned_condition'
         #     if ==, borrower_score +=3
